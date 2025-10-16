@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-hostpath-volumes
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: no-hostpath-volumes
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: "HostPath volumes are forbidden."
+        pattern:
+          spec:
+            =(volumes): # 볼륨 목록 전체를 검사
+              - X(hostPath): "?*" # '?*'는 어떤 값이든 상관없이 필드 존재 자체를 의미합니다.
+              # X(hostPath): 'hostPath'라는 필드가 존재하면 안 된다는 조건입니다.
+              # 'X()'는 앵커(anchor)로, 해당 필드의 부재(absence)를 의미합니다.
