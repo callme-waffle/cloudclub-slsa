@@ -1,7 +1,6 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  # 이름을 허용 목록을 사용한다는 의미로 바꾸는 것이 더 명확합니다.
   name: restrict-hostpath-to-allowed-list
 spec:
   validationFailureAction: Enforce
@@ -14,7 +13,7 @@ spec:
             kinds:
               - Pod
       validate:
-        message: "The HostPath `{{element.hostPath.path}}` is not in the allowed list. Please use an approved path."
+        message: "A HostPath volume is used which is not in the allowed list. Please use an approved path."
         foreach:
         - list: "request.object.spec.volumes"
           preconditions:
